@@ -1,0 +1,22 @@
+# STM32 / CMake build output
+build/
+Debug/
+Release/
+*.elf
+*.bin
+*.hex
+*.map
+*.o
+*.d
+
+# ESP32 (PlatformIO / ESP-IDF)
+.pio/
+managed_components/
+sdkconfig.old
+
+# Editor / OS
+.vs/
+*.swp
+Thumbs.db
+desktop.ini
+.DS_Store
