@@ -15,16 +15,16 @@ Graduation project at **Beetroot Academy**.
 
 The donor for the whole project: a regular Gaggia Classic with a single boiler, a vibration pump and a mechanical steam knob.
 
-![Original machine](image/1_original.jpg)
+<img src="image/1_original.jpg" alt="Original machine" width="600">
 
 Inside it had already been modded once: an off-the-shelf PID temperature controller sat on top of the stock wiring.
 All of this was removed.
 
-![Original hardware](image/2_original_hardware.jpg)
+<img src="image/2_original_hardware.jpg" alt="Original hardware" width="600">
 
 | Stock boiler | Mechanical steam valve | Vibration pump |
 |---|---|---|
-| ![](image/3_original_boiler.jpg) | ![](image/4_original_steam_knob.jpg) | ![](image/5_original_vibration_pump.jpg) |
+| <img src="image/3_original_boiler.jpg" alt="" width="250"> | <img src="image/4_original_steam_knob.jpg" alt="" width="250"> | <img src="image/5_original_vibration_pump.jpg" alt="" width="250"> |
 
 - **Boiler** — single aluminium boiler with bimetal thermostats, originally shared between brew and steam.
   It stays on the group head and now works as the brew boiler only.
@@ -39,7 +39,7 @@ All of this was removed.
 All the new hydraulic parts laid out before integration: two cylindrical boilers (preheat and steam), Danfoss EV210A solenoid valves,
 safety/check valves and PTFE tubing.
 
-![Hydraulic hardware](image/6_intergation_hydraulic_hardware.jpg)
+<img src="image/6_intergation_hydraulic_hardware.jpg" alt="Hydraulic hardware" width="600">
 
 ### BLDC pump + flowmeter
 
@@ -48,7 +48,7 @@ assembly is held together by 3D-printed brackets (blue clamp, yellow base).
 
 | | |
 |---|---|
-| ![](image/7_intergation_bldc_pump.jpg) | ![](image/8_bldc_pump_with_flowmeter.jpg) |
+| <img src="image/7_intergation_bldc_pump.jpg" alt="" width="300"> | <img src="image/8_bldc_pump_with_flowmeter.jpg" alt="" width="300"> |
 
 The pump speed is set by PWM from the STM32 (TIM4, `PB6`), with a tacho input for RPM feedback — see
 [`bldc_pump.c`](../Core/Src/bldc_pump.c).
@@ -58,7 +58,7 @@ The pump speed is set by PWM from the STM32 (TIM4, `PB6`), with a tacho input fo
 The manual steam knob is replaced with an ODE 21AP1KC4V30 solenoid valve (G 1/8, DN 3.0 mm, 0–3.5 bar, DC coil).
 Driving the coil with PWM gives adjustable steam flow instead of plain on/off.
 
-![PWM steam valve](image/9_pwm_steam_valve.jpg)
+<img src="image/9_pwm_steam_valve.jpg" alt="PWM steam valve" width="600">
 
 Tuning the PWM for the valve: [video](image/10_settings_pwm_valve.MP4)
 
@@ -72,20 +72,20 @@ The module was cut from the stainless body of a donor espresso machine (cut line
 
 | Donor unit | Cut module |
 |---|---|
-| ![](image/11_donor_unit.jpg) | ![](image/12_module%20housing.jpg) |
+| <img src="image/11_donor_unit.jpg" alt="" width="300"> | <img src="image/12_module%20housing.jpg" alt="" width="300"> |
 
 Stiffening ribs and internal brackets were TIG-welded in to make the thin sheet rigid and to carry the boilers:
 
 | | |
 |---|---|
-| ![](image/13_stiffening%20ribs.jpg) | ![](image/14_stiffening%20ribs.jpg) |
+| <img src="image/13_stiffening%20ribs.jpg" alt="" width="300"> | <img src="image/14_stiffening%20ribs.jpg" alt="" width="300"> |
 
 Test-fitting the module against the Gaggia frame:
 
 | | |
 |---|---|
-| ![](image/15_module%20fitting.jpg) | ![](image/16_module%20fitting.jpg) |
-| ![](image/17_module%20fitting.jpg) | ![](image/18_module%20fitting.jpg) |
+| <img src="image/15_module%20fitting.jpg" alt="" width="300"> | <img src="image/16_module%20fitting.jpg" alt="" width="300"> |
+| <img src="image/17_module%20fitting.jpg" alt="" width="300"> | <img src="image/18_module%20fitting.jpg" alt="" width="300"> |
 
 ---
 
@@ -94,7 +94,7 @@ Test-fitting the module against the Gaggia frame:
 Custom airbrushed livery inspired by the Lancia Rally 037 (W. Röhrl / K. Geistdörfer, #1):
 white Gaggia body, black module, Martini-style stripes.
 
-![Custom paint job](image/19_custom%20paint%20job.jpg)
+<img src="image/19_custom%20paint%20job.jpg" alt="Custom paint job" width="600">
 
 ---
 
@@ -105,11 +105,11 @@ brew group, steam boiler fill and hot water.
 
 | | |
 |---|---|
-| ![](image/20_distribution%20valves.jpg) | ![](image/21_distribution%20valves.jpg) |
+| <img src="image/20_distribution%20valves.jpg" alt="" width="300"> | <img src="image/21_distribution%20valves.jpg" alt="" width="300"> |
 
 The valve block is closed with a cover; the tubing exits through a slot.
 
-![Valve box](image/22_box_distribution%20valves.jpg)
+<img src="image/22_box_distribution%20valves.jpg" alt="Valve box" width="600">
 
 In firmware every valve is a GPIO output (`PA3` fill, `PA4` brew, `PA5` hot water). All valves are closed on
 start-up and in `Error_Handler()` — see [`valves.c`](../Core/Src/valves.c).
@@ -128,8 +128,8 @@ The cylindrical boilers are mounted vertically in the module on the welded brack
 
 | | |
 |---|---|
-| ![](image/23_boiler_integration.jpg) | ![](image/24_boiler_integration.jpg) |
-| ![](image/25_boiler_integration.jpg) | ![](image/26_boiler_integration.jpg) |
+| <img src="image/23_boiler_integration.jpg" alt="" width="300"> | <img src="image/24_boiler_integration.jpg" alt="" width="300"> |
+| <img src="image/25_boiler_integration.jpg" alt="" width="300"> | <img src="image/26_boiler_integration.jpg" alt="" width="300"> |
 
 Each heater is switched by an SSR (`PA0` preheat, `PA1` steam, `PA2` brew). Temperature is read by three NTC
 thermistors on ADC1 + DMA (Steinhart–Hart, 1.5 kΩ pull-up) — see [`ntc_sensor.c`](../Core/Src/ntc_sensor.c).
@@ -144,13 +144,13 @@ SSRs are mounted on a heatsink plate inside the module, next to the mains inlet.
 
 | | |
 |---|---|
-| ![](image/27_ssr_intergration.jpg) | ![](image/28_ssr_intergration.jpg) |
+| <img src="image/27_ssr_intergration.jpg" alt="" width="300"> | <img src="image/28_ssr_intergration.jpg" alt="" width="300"> |
 
 ### Assembled module
 
 | Rear (IEC mains inlet) | Side |
 |---|---|
-| ![](image/29_rear%20view.jpg) | ![](image/30_side%20view.jpg) |
+| <img src="image/29_rear%20view.jpg" alt="" width="300"> | <img src="image/30_side%20view.jpg" alt="" width="300"> |
 
 ---
 
@@ -161,7 +161,7 @@ knob on the side where the steam knob used to be.
 
 | Cable gland for the knob | Display box |
 |---|---|
-| ![](image/31_%20haptic%20knop.jpg) | ![](image/32_box_for_display.jpg) |
+| <img src="image/31_%20haptic%20knop.jpg" alt="" width="300"> | <img src="image/32_box_for_display.jpg" alt="" width="300"> |
 
 ### Haptic knob
 
@@ -170,15 +170,15 @@ The motor produces detents / end stops in software, so the same knob can be used
 
 | | |
 |---|---|
-| ![](image/33_3D_printing_of_a_tactile_pen%20housing.jpg) | ![](image/34_3D_printing_of_a_tactile_pen%20housing.jpg) |
+| <img src="image/33_3D_printing_of_a_tactile_pen%20housing.jpg" alt="" width="300"> | <img src="image/34_3D_printing_of_a_tactile_pen%20housing.jpg" alt="" width="300"> |
 
 | Housing with magnet | Encoder board |
 |---|---|
-| ![](image/35_3D_printing_of_a_tactile_pen%20housing.jpg) | ![](image/36_encoder.jpg) |
+| <img src="image/35_3D_printing_of_a_tactile_pen%20housing.jpg" alt="" width="300"> | <img src="image/36_encoder.jpg" alt="" width="300"> |
 
 | Gimbal BLDC | Bench test |
 |---|---|
-| ![](image/37_bldc.jpg) | ![](image/38_testing.jpg) |
+| <img src="image/37_bldc.jpg" alt="" width="300"> | <img src="image/38_testing.jpg" alt="" width="300"> |
 
 Bench test: ESP32 dev board, BLDC driver, buck converter and the motor on a breadboard.
 

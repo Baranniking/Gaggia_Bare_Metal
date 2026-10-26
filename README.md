@@ -5,7 +5,7 @@ written bare-metal in C (STM32 HAL, no RTOS).
 
 This is my graduation project at **Beetroot Academy**.
 
-![Gaggia Bare Metal](stm_hardware/stm_gaggia_bareMetal/docs/image/32_box_for_display.jpg)
+<img src="stm_hardware/stm_gaggia_bareMetal/docs/image/32_box_for_display.jpg" alt="Gaggia Bare Metal" width="600">
 
 ## What was done
 

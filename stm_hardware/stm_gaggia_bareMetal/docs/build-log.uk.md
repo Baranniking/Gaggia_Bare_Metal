@@ -15,16 +15,16 @@ Gaggia Classic, перебудована з нуля: нова гідравлі�
 
 Основа всього проєкту: звичайна Gaggia Classic з одним бойлером, вібраційною помпою та механічним паровим краном.
 
-![Оригінальна машина](image/1_original.jpg)
+<img src="image/1_original.jpg" alt="Оригінальна машина" width="600">
 
 Усередині її вже раз модифікували: поверх стокової проводки стояв готовий PID-терморегулятор.
 Усе це було демонтовано.
 
-![Оригінальне обладнання](image/2_original_hardware.jpg)
+<img src="image/2_original_hardware.jpg" alt="Оригінальне обладнання" width="600">
 
 | Стоковий бойлер | Механічний паровий кран | Вібраційна помпа |
 |---|---|---|
-| ![](image/3_original_boiler.jpg) | ![](image/4_original_steam_knob.jpg) | ![](image/5_original_vibration_pump.jpg) |
+| <img src="image/3_original_boiler.jpg" alt="" width="250"> | <img src="image/4_original_steam_knob.jpg" alt="" width="250"> | <img src="image/5_original_vibration_pump.jpg" alt="" width="250"> |
 
 - **Бойлер** — один алюмінієвий бойлер з біметалевими термостатами, спочатку спільний для кави та пари.
   Він залишається на групі й тепер працює лише як кавовий бойлер.
@@ -39,7 +39,7 @@ Gaggia Classic, перебудована з нуля: нова гідравлі�
 Усі нові гідравлічні компоненти перед встановленням: два циліндричні бойлери (преднагрів і пара), соленоїдні клапани Danfoss EV210A,
 запобіжні/зворотні клапани та PTFE-трубки.
 
-![Гідравліка](image/6_intergation_hydraulic_hardware.jpg)
+<img src="image/6_intergation_hydraulic_hardware.jpg" alt="Гідравліка" width="600">
 
 ### BLDC-помпа + витратомір
 
@@ -48,7 +48,7 @@ Gaggia Classic, перебудована з нуля: нова гідравлі�
 
 | | |
 |---|---|
-| ![](image/7_intergation_bldc_pump.jpg) | ![](image/8_bldc_pump_with_flowmeter.jpg) |
+| <img src="image/7_intergation_bldc_pump.jpg" alt="" width="300"> | <img src="image/8_bldc_pump_with_flowmeter.jpg" alt="" width="300"> |
 
 Швидкість помпи задається ШІМ із STM32 (TIM4, `PB6`), зворотний зв'язок по обертах — через тахо-вхід, див.
 [`bldc_pump.c`](../Core/Src/bldc_pump.c).
@@ -58,7 +58,7 @@ Gaggia Classic, перебудована з нуля: нова гідравлі�
 Ручний паровий кран замінено на соленоїдний клапан ODE 21AP1KC4V30 (G 1/8, DN 3.0 мм, 0–3.5 бар, котушка DC).
 Керування котушкою через ШІМ дає регульований потік пари замість простого увімк./вимк.
 
-![Паровий клапан з ШІМ](image/9_pwm_steam_valve.jpg)
+<img src="image/9_pwm_steam_valve.jpg" alt="Паровий клапан з ШІМ" width="600">
 
 Налаштування ШІМ клапана: [відео](image/10_settings_pwm_valve.MP4)
 
@@ -72,20 +72,20 @@ Gaggia Classic, перебудована з нуля: нова гідравлі�
 
 | Донор | Вирізаний модуль |
 |---|---|
-| ![](image/11_donor_unit.jpg) | ![](image/12_module%20housing.jpg) |
+| <img src="image/11_donor_unit.jpg" alt="" width="300"> | <img src="image/12_module%20housing.jpg" alt="" width="300"> |
 
 Щоб тонкий лист став жорстким і витримував бойлери, всередину вварено ребра жорсткості та кронштейни (TIG):
 
 | | |
 |---|---|
-| ![](image/13_stiffening%20ribs.jpg) | ![](image/14_stiffening%20ribs.jpg) |
+| <img src="image/13_stiffening%20ribs.jpg" alt="" width="300"> | <img src="image/14_stiffening%20ribs.jpg" alt="" width="300"> |
 
 Примірка модуля до рами Gaggia:
 
 | | |
 |---|---|
-| ![](image/15_module%20fitting.jpg) | ![](image/16_module%20fitting.jpg) |
-| ![](image/17_module%20fitting.jpg) | ![](image/18_module%20fitting.jpg) |
+| <img src="image/15_module%20fitting.jpg" alt="" width="300"> | <img src="image/16_module%20fitting.jpg" alt="" width="300"> |
+| <img src="image/17_module%20fitting.jpg" alt="" width="300"> | <img src="image/18_module%20fitting.jpg" alt="" width="300"> |
 
 ---
 
@@ -94,7 +94,7 @@ Gaggia Classic, перебудована з нуля: нова гідравлі�
 Авторське аерографічне фарбування в стилі Lancia Rally 037 (W. Röhrl / K. Geistdörfer, №1):
 білий корпус Gaggia, чорний модуль, смуги в стилі Martini.
 
-![Фарбування](image/19_custom%20paint%20job.jpg)
+<img src="image/19_custom%20paint%20job.jpg" alt="Фарбування" width="600">
 
 ---
 
@@ -105,11 +105,11 @@ Gaggia Classic, перебудована з нуля: нова гідравлі�
 
 | | |
 |---|---|
-| ![](image/20_distribution%20valves.jpg) | ![](image/21_distribution%20valves.jpg) |
+| <img src="image/20_distribution%20valves.jpg" alt="" width="300"> | <img src="image/21_distribution%20valves.jpg" alt="" width="300"> |
 
 Блок клапанів закривається кришкою, трубка виходить через проріз.
 
-![Короб клапанів](image/22_box_distribution%20valves.jpg)
+<img src="image/22_box_distribution%20valves.jpg" alt="Короб клапанів" width="600">
 
 У прошивці кожен клапан — це вихід GPIO (`PA3` наповнення, `PA4` група, `PA5` гаряча вода). Під час старту
 та в `Error_Handler()` усі клапани закриваються — див. [`valves.c`](../Core/Src/valves.c).
@@ -128,8 +128,8 @@ Gaggia Classic, перебудована з нуля: нова гідравлі�
 
 | | |
 |---|---|
-| ![](image/23_boiler_integration.jpg) | ![](image/24_boiler_integration.jpg) |
-| ![](image/25_boiler_integration.jpg) | ![](image/26_boiler_integration.jpg) |
+| <img src="image/23_boiler_integration.jpg" alt="" width="300"> | <img src="image/24_boiler_integration.jpg" alt="" width="300"> |
+| <img src="image/25_boiler_integration.jpg" alt="" width="300"> | <img src="image/26_boiler_integration.jpg" alt="" width="300"> |
 
 Кожен нагрівач вмикається через SSR (`PA0` преднагрів, `PA1` пара, `PA2` кавовий бойлер). Температура зчитується трьома
 NTC-термісторами через ADC1 + DMA (Steinhart–Hart, підтяжка 1.5 кОм) — див. [`ntc_sensor.c`](../Core/Src/ntc_sensor.c).
@@ -144,13 +144,13 @@ SSR встановлені на пластині-радіаторі всеред
 
 | | |
 |---|---|
-| ![](image/27_ssr_intergration.jpg) | ![](image/28_ssr_intergration.jpg) |
+| <img src="image/27_ssr_intergration.jpg" alt="" width="300"> | <img src="image/28_ssr_intergration.jpg" alt="" width="300"> |
 
 ### Зібраний модуль
 
 | Ззаду (мережевий роз'єм IEC) | Збоку |
 |---|---|
-| ![](image/29_rear%20view.jpg) | ![](image/30_side%20view.jpg) |
+| <img src="image/29_rear%20view.jpg" alt="" width="300"> | <img src="image/30_side%20view.jpg" alt="" width="300"> |
 
 ---
 
@@ -161,7 +161,7 @@ SSR встановлені на пластині-радіаторі всеред
 
 | Кабельний ввід для ручки | Корпус дисплея |
 |---|---|
-| ![](image/31_%20haptic%20knop.jpg) | ![](image/32_box_for_display.jpg) |
+| <img src="image/31_%20haptic%20knop.jpg" alt="" width="300"> | <img src="image/32_box_for_display.jpg" alt="" width="300"> |
 
 ### Тактильна ручка
 
@@ -170,15 +170,15 @@ SSR встановлені на пластині-радіаторі всеред
 
 | | |
 |---|---|
-| ![](image/33_3D_printing_of_a_tactile_pen%20housing.jpg) | ![](image/34_3D_printing_of_a_tactile_pen%20housing.jpg) |
+| <img src="image/33_3D_printing_of_a_tactile_pen%20housing.jpg" alt="" width="300"> | <img src="image/34_3D_printing_of_a_tactile_pen%20housing.jpg" alt="" width="300"> |
 
 | Корпус з магнітом | Плата енкодера |
 |---|---|
-| ![](image/35_3D_printing_of_a_tactile_pen%20housing.jpg) | ![](image/36_encoder.jpg) |
+| <img src="image/35_3D_printing_of_a_tactile_pen%20housing.jpg" alt="" width="300"> | <img src="image/36_encoder.jpg" alt="" width="300"> |
 
 | Гімбальний BLDC | Тест на столі |
 |---|---|
-| ![](image/37_bldc.jpg) | ![](image/38_testing.jpg) |
+| <img src="image/37_bldc.jpg" alt="" width="300"> | <img src="image/38_testing.jpg" alt="" width="300"> |
 
 Тест на столі: плата ESP32, драйвер BLDC, понижувальний перетворювач і мотор на макетній платі.
 
