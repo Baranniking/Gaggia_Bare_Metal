@@ -187,6 +187,20 @@ water and mains (heaters, valves, pump, sensors); the ESP32 only handles the use
 
 ---
 
+## 8. Wiring diagram
+
+Current-stage schematic of the STM32 analog and pump side (heaters, valves and protection are not shown).
+
+<img src="image/schematic.png" alt="Wiring diagram" width="800">
+
+- **Temperature sensors** — three NTC dividers (1.5 kΩ pull-up to +3.3 V) with a 100 nF filter capacitor on each ADC input.
+- **Water level probes** — one 2 kHz PWM (TIM1, `PA8`) drives both the boiler and the tank probe; each has its own
+  R1/C1/R2 network and ADC input. The amplitude at the measurement node is large on a dry probe and small in water.
+- **Pump** — PWM from TIM4 (20 kHz) goes through two NAND gates of a 74HCT00 (level shift to 5 V) and an RC filter
+  into the 0–5 V speed input of the Fluid-o-Tech pump; the tacho output returns to an MCU EXTI input through a divider.
+
+---
+
 ## Firmware status
 
 MCU: STM32F401 (CubeMX + CMake, `arm-none-eabi-gcc`).
