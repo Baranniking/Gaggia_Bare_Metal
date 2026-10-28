@@ -1,11 +1,12 @@
 #include "ntc_sensor.h"
 
-
+#define T0 273.15
 #define ADC_RESOLUTION 4075.0f // сменить имя константы на более подходящее, так как это не разрешение АЦП, а максимальное значение АЦП в данном случае
 
 void init_ntc_sensor(ntc_sensor_t *sensor, float adc_value) {
         sensor->temp = NAN; 
         sensor->ntc_status = false; // Indicate that the NTC sensor is not functioning properly
+        sensor->t0 = T0;
 }
 
 float get_temperature(ntc_sensor_t *sensor, float adc_value) {

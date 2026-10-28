@@ -15,6 +15,7 @@ typedef struct
     TIM_HandleTypeDef *htim;
     uint8_t percent;
     uint16_t rpm;
+    uint16_t tacho_pin;
     volatile uint32_t impulse_tacho;
     uint32_t last_meas_impulse_tacho;
     uint32_t time_last_meas;
@@ -22,7 +23,10 @@ typedef struct
     uint32_t channel; 
 }bldc_pump_t;
 
-HAL_StatusTypeDef init_bldc_pump(bldc_pump_t *pump, TIM_HandleTypeDef *htim, uint32_t channel);
-state_pump_t set_pump(bldc_pump_t *pump, uint8_t percent);
+HAL_StatusTypeDef pump_init(bldc_pump_t *pump, TIM_HandleTypeDef *htim, uint32_t channel_pin, uint16_t pin_tacho);
+state_pump_t pump_set(bldc_pump_t *pump, uint8_t percent);
 state_pump_t pump_stop(bldc_pump_t *pump);
+state_pump_t update_pump_tacho(bldc_pump_t *pump);
+const char *pump_state_text(state_pump_t state);
+
 #endif

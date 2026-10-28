@@ -31,6 +31,7 @@
 #include "log.h"
 #include "valves.h"
 #include "water_level_steam.h"
+#include "bldc_pump.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -40,7 +41,8 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define NTC_10K_INIT { .sh_a = 1.042752e-03f, .sh_b = 2.513051e-04f, \
+                       .sh_c = -4.180126e-09f, .r_pull = 1500.0f }
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -51,30 +53,11 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-ntc_sensor_t ntc_preheat_sensor = {
-  .sh_a = 1.042752e-03f,
-  .sh_b = 2.513051e-04f,
-  .sh_c = -4.180126e-09f,
-  .r_pull = 1500.0f,
-  .t0 = 273.15f
+ntc_sensor_t ntc_preheat_sensor =  NTC_10K_INIT;
+ntc_sensor_t ntc_steam_sensor = NTC_10K_INIT;
+ntc_sensor_t ntc_coffee_sensor = NTC_10K_INIT;
 
-};
-ntc_sensor_t ntc_steam_sensor = {  
-  .sh_a = 1.042752e-03f,
-  .sh_b = 2.513051e-04f,
-  .sh_c = -4.180126e-09f,
-  .r_pull = 1500.0f,
-  .t0 = 273.15f
-};
-
-ntc_sensor_t ntc_coffee_sensor = {  
-  .sh_a = 1.042752e-03f,
-  .sh_b = 2.513051e-04f,
-  .sh_c = -4.180126e-09f,
-  .r_pull = 1500.0f,
-  .t0 = 273.15f
-};
-
+bldc_pump_t pump;
 water_probe_level_t steam_probe;
 
 /* USER CODE END PV */
@@ -133,12 +116,11 @@ int main(void)
 
     valve_init();
 
+    pump_init(&pump, &htim4, TIM_CHANNEL_1, pump_tacho_Pin);
     log_init(&huart1);
-
     init_ntc_sensor(&ntc_preheat_sensor, adc_dma_get_raw(ntc_preheat));
     init_ntc_sensor(&ntc_steam_sensor, adc_dma_get_raw(ntc_steam)); 
     init_ntc_sensor(&ntc_coffee_sensor, adc_dma_get_raw(ntc_coffee));
-
     init_water_level(&steam_probe, &htim1, TIM_CHANNEL_1);
    
     
@@ -150,32 +132,12 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-   /*
-    static uint32_t last_log_time = 0;
-    uint32_t current_time = HAL_GetTick();
-    if (current_time - last_log_time >= 2000) { // Log every 1 second
-      get_temperature(&ntc_preheat_sensor, adc_dma_get_raw(ntc_preheat)); 
-      get_temperature(&ntc_steam_sensor, adc_dma_get_raw(ntc_steam));
-      get_temperature(&ntc_coffee_sensor, adc_dma_get_raw(ntc_coffee));
-      log_write("Preheat NTC: Temp = %.2f, Raw = %d, Status = %s\r\n", ntc_preheat_sensor.temp, ntc_preheat_sensor.raw, ntc_preheat_sensor.ntc_status ? "OK" : "Error");
-      log_write("Steam NTC: Temp = %.2f, Raw = %d, Status = %s\r\n", ntc_steam_sensor.temp, ntc_steam_sensor.raw, ntc_steam_sensor.ntc_status ? "OK" : "Error");
-      log_write("Coffee NTC: Temp = %.2f, Raw = %d, Status = %s\r\n", ntc_coffee_sensor.temp, ntc_coffee_sensor.raw, ntc_coffee_sensor.ntc_status ? "OK" : "Error");
-      last_log_time = current_time;
-    }
- */ 
-    static uint32_t last_log_time = 0;
-    uint32_t current_time = HAL_GetTick();
-
-    if(current_time - last_log_time >= 2000){
-    water_probe_update(&steam_probe, adc_dma_get_amplitude(water_level_steam));
-    log_write("Probe amplitude = : %u, Status = %s\r\n", steam_probe.amplitude, water_probe_state_text(steam_probe.state));
-    last_log_time = current_time;
-    }
+   
 
     /* USER CODE END WHILE */
-
+ 
     /* USER CODE BEGIN 3 */
-  }
+}
   /* USER CODE END 3 */
 }
 
@@ -226,7 +188,10 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
+    pump.impulse_tacho ++;
+  
+}
 /* USER CODE END 4 */
 
 /**
@@ -237,6 +202,7 @@ void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
      valve_closed_all();
+     pump_stop(&pump);
   /* User can add his own implementation to report the HAL error return state */
   __disable_irq();
   while (1)
