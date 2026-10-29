@@ -12,6 +12,7 @@ typedef enum {
     GROUP_VALVE,
     FILL_STEAM_VALVE,
     HOT_WATER_VALVE,
+    AIR_VENTING_VALVE,
     NUM_OF_VALVE
 }valve_id_t;
 

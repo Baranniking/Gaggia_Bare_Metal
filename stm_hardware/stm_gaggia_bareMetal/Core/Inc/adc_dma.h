@@ -9,6 +9,8 @@ typedef enum
         ntc_steam,
         ntc_coffee,
         water_level_steam,
+        water_level_tank_min,
+        water_level_tank_max,
         numb_of_ranks,
 } dma_rank_t;
 

@@ -69,8 +69,14 @@ void Error_Handler(void);
 #define brew_valve_GPIO_Port GPIOA
 #define hot_water_Pin GPIO_PIN_5
 #define hot_water_GPIO_Port GPIOA
-#define water_steam_level_Pin GPIO_PIN_6
-#define water_steam_level_GPIO_Port GPIOA
+#define air_venting_valve_Pin GPIO_PIN_6
+#define air_venting_valve_GPIO_Port GPIOA
+#define adc_steam_water_level_Pin GPIO_PIN_7
+#define adc_steam_water_level_GPIO_Port GPIOA
+#define adc_tank_level_min_Pin GPIO_PIN_0
+#define adc_tank_level_min_GPIO_Port GPIOB
+#define adc_tank_level_max_Pin GPIO_PIN_1
+#define adc_tank_level_max_GPIO_Port GPIOB
 #define pwm_water_level_Pin GPIO_PIN_8
 #define pwm_water_level_GPIO_Port GPIOA
 #define pwm_steam_valve_Pin GPIO_PIN_4

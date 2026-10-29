@@ -9,6 +9,7 @@ static valve_cfg_t valve_cfg[NUM_OF_VALVE] = {
     [GROUP_VALVE] = {brew_valve_GPIO_Port, brew_valve_Pin, GPIO_PIN_SET, GPIO_PIN_RESET, START_STATE},
     [FILL_STEAM_VALVE] = {fill_valve_GPIO_Port, fill_valve_Pin, GPIO_PIN_SET, GPIO_PIN_RESET, START_STATE},
     [HOT_WATER_VALVE] = {hot_water_GPIO_Port, hot_water_Pin, GPIO_PIN_SET, GPIO_PIN_RESET, START_STATE},
+    [AIR_VENTING_VALVE] = {air_venting_valve_GPIO_Port, air_venting_valve_Pin, GPIO_PIN_SET, GPIO_PIN_RESET, START_STATE},
 };
 
 void valve_closed_all(void){

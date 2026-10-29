@@ -33,6 +33,7 @@
 #include "water_level_steam.h"
 #include "bldc_pump.h"
 #include "steam_pwm_valve.h"
+#include "water_level_tank.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -44,7 +45,8 @@
 /* USER CODE BEGIN PD */
 #define NTC_10K_INIT {.sh_a = 1.042752e-03f, .sh_b = 2.513051e-04f, .sh_c = -4.180126e-09f, .r_pull = 1500.0f}
 // #define TEST_PUMP
-#define TEST_PWM_VALVE
+// #define TEST_PWM_VALVE
+#define TEST_TANK_PROBE
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -61,6 +63,7 @@ ntc_sensor_t ntc_coffee_sensor = NTC_10K_INIT;
 
 bldc_pump_t pump;
 steam_pwm_valve_t steam_pwm_valve;
+water_level_tank_t tank_level_probe;
 water_probe_level_t steam_probe;
 
 volatile uint8_t test_percent = 0;
@@ -131,6 +134,7 @@ int main(void)
   init_ntc_sensor(&ntc_coffee_sensor, adc_dma_get_raw(ntc_coffee));
   init_water_level(&steam_probe, &htim1, TIM_CHANNEL_1);
   init_steam_pwm_valve(&steam_pwm_valve, &htim3, TIM_CHANNEL_1);
+  init_water_level_tank(&tank_level_probe);
 
   /* USER CODE END 2 */
 
@@ -180,6 +184,20 @@ int main(void)
                 water_probe_state_text(steam_probe.state),
                 (unsigned)steam_pwm_valve.percent,
                 pwm_valve_steam_state_text(steam_pwm_valve.state));
+      last_log_time = current_time;
+    }
+#endif
+#ifdef TEST_TANK_PROBE
+    static uint32_t last_log_time = 0;
+    uint32_t current_time = HAL_GetTick();
+
+    if (current_time - last_log_time >= 2000)
+    {
+      water_tank_level_tank_update(&tank_level_probe, adc_dma_get_amplitude(water_level_tank_min), adc_dma_get_amplitude(water_level_tank_max));
+      log_write("Probe min: amp=%u, Probe max: amp=%u,  | TANK: %s\r\n",
+                (unsigned)tank_level_probe.amplitude_min_level,
+                (unsigned)tank_level_probe.amplitude_max_level,
+                water_tank_probe_state_text(tank_level_probe.state));
       last_log_time = current_time;
     }
 #endif
