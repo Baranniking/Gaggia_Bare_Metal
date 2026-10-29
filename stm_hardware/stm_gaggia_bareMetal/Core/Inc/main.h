@@ -73,6 +73,8 @@ void Error_Handler(void);
 #define water_steam_level_GPIO_Port GPIOA
 #define pwm_water_level_Pin GPIO_PIN_8
 #define pwm_water_level_GPIO_Port GPIOA
+#define pwm_steam_valve_Pin GPIO_PIN_4
+#define pwm_steam_valve_GPIO_Port GPIOB
 #define pump_tacho_Pin GPIO_PIN_5
 #define pump_tacho_GPIO_Port GPIOB
 #define pump_tacho_EXTI_IRQn EXTI9_5_IRQn

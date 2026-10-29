@@ -32,6 +32,7 @@
 #include "valves.h"
 #include "water_level_steam.h"
 #include "bldc_pump.h"
+#include "steam_pwm_valve.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -42,7 +43,8 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define NTC_10K_INIT {.sh_a = 1.042752e-03f, .sh_b = 2.513051e-04f, .sh_c = -4.180126e-09f, .r_pull = 1500.0f}
-//#define TEST_PUMP
+// #define TEST_PUMP
+#define TEST_PWM_VALVE
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -58,6 +60,7 @@ ntc_sensor_t ntc_steam_sensor = NTC_10K_INIT;
 ntc_sensor_t ntc_coffee_sensor = NTC_10K_INIT;
 
 bldc_pump_t pump;
+steam_pwm_valve_t steam_pwm_valve;
 water_probe_level_t steam_probe;
 
 volatile uint8_t test_percent = 0;
@@ -110,6 +113,7 @@ int main(void)
   MX_USART1_UART_Init();
   MX_TIM1_Init();
   MX_TIM4_Init();
+  MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
   HAL_StatusTypeDef DMA_Status = adc_dma_init(&hadc1);
   if (DMA_Status != HAL_OK)
@@ -126,6 +130,7 @@ int main(void)
   init_ntc_sensor(&ntc_steam_sensor, adc_dma_get_raw(ntc_steam));
   init_ntc_sensor(&ntc_coffee_sensor, adc_dma_get_raw(ntc_coffee));
   init_water_level(&steam_probe, &htim1, TIM_CHANNEL_1);
+  init_steam_pwm_valve(&steam_pwm_valve, &htim3, TIM_CHANNEL_1);
 
   /* USER CODE END 2 */
 
@@ -153,6 +158,28 @@ int main(void)
                 (unsigned)pump.percent,
                 (unsigned)pump.rpm,
                 pump_state_text(pump.state));
+      last_log_time = current_time;
+    }
+#endif
+#ifdef TEST_PWM_VALVE
+    steam_pwm_valve_set(&steam_pwm_valve, test_percent);
+    steam_pwm_valve_update(&steam_pwm_valve);
+    if (test_reset)
+    {
+      steam_pwm_valve_reset_fault(&steam_pwm_valve);
+    }
+
+    static uint32_t last_log_time = 0;
+    uint32_t current_time = HAL_GetTick();
+
+    if (current_time - last_log_time >= 2000)
+    {
+      water_probe_update(&steam_probe, adc_dma_get_amplitude(water_level_steam));
+      log_write("Probe: amp=%u, %s | Valve: set=%u%%, %s\r\n",
+                (unsigned)steam_probe.amplitude,
+                water_probe_state_text(steam_probe.state),
+                (unsigned)steam_pwm_valve.percent,
+                pwm_valve_steam_state_text(steam_pwm_valve.state));
       last_log_time = current_time;
     }
 #endif
@@ -224,6 +251,7 @@ void Error_Handler(void)
   /* USER CODE BEGIN Error_Handler_Debug */
   valve_closed_all();
   pump_stop(&pump);
+  steam_pwm_valve_stop(&steam_pwm_valve);
   /* User can add his own implementation to report the HAL error return state */
   __disable_irq();
   while (1)
