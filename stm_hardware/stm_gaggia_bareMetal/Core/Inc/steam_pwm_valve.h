@@ -8,8 +8,8 @@
 typedef enum
 {
 OUT_VALVE_STEAM_FAULT,
-OUT_VALVE_STEAM_ON,
 OUT_VALVE_STEAM_OFF,
+OUT_VALVE_STEAM_ON,
 }out_steam_valve_state_t;
 
 typedef struct

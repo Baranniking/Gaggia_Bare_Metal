@@ -20,6 +20,7 @@
 #include "main.h"
 #include "adc.h"
 #include "dma.h"
+#include "system_snapshot.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
@@ -34,6 +35,7 @@
 #include "bldc_pump.h"
 #include "steam_pwm_valve.h"
 #include "water_level_tank.h"
+#include "system_snapshot.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -65,7 +67,7 @@ bldc_pump_t pump;
 steam_pwm_valve_t steam_pwm_valve;
 water_level_tank_t tank_level_probe;
 water_probe_level_t steam_probe;
-
+system_snapshot_t snapshot;
 volatile uint8_t test_percent = 0;
 volatile uint8_t test_reset = 0;
 
@@ -193,11 +195,20 @@ int main(void)
 
     if (current_time - last_log_time >= 2000)
     {
+
+      pump_set(&pump, test_percent);
+      update_pump_tacho(&pump);
+      get_temperature(&ntc_coffee_sensor, adc_dma_get_amplitude(ntc_coffee));
+      get_temperature(&ntc_steam_sensor, adc_dma_get_amplitude (ntc_steam));
+      get_temperature(&ntc_preheat_sensor, adc_dma_get_amplitude(ntc_preheat));
+      water_probe_update(&steam_probe, adc_dma_get_amplitude(water_level_steam));
       water_tank_level_tank_update(&tank_level_probe, adc_dma_get_amplitude(water_level_tank_min), adc_dma_get_amplitude(water_level_tank_max));
-      log_write("Probe min: amp=%u, Probe max: amp=%u,  | TANK: %s\r\n",
-                (unsigned)tank_level_probe.amplitude_min_level,
-                (unsigned)tank_level_probe.amplitude_max_level,
-                water_tank_probe_state_text(tank_level_probe.state));
+      snapshot_update(&snapshot, &ntc_coffee_sensor, &ntc_steam_sensor, &ntc_preheat_sensor,
+                      &pump, &steam_pwm_valve, &tank_level_probe, &steam_probe);
+      log_write("t=%lu seq=%u faults=0x%02X valves=0x%02X pump=%u, rpm=%u\r\n",
+                (unsigned long)snapshot.up_time_ms, (unsigned)snapshot.seq,
+                (unsigned)snapshot.faults, (unsigned)snapshot.valves,
+                (unsigned)snapshot.state_pump, (unsigned)snapshot.rpm_pump);
       last_log_time = current_time;
     }
 #endif
