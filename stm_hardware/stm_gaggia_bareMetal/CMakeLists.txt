@@ -53,6 +53,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
  Core/Src/steam_pwm_valve.c
  Core/Src/water_level_tank.c
  Core/Src/system_snapshot.c
+ Core/Src/protocol.c
 
     # Add user sources here
 )

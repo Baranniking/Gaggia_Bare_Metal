@@ -216,5 +216,6 @@ MCU: STM32F401 (CubeMX + CMake, `arm-none-eabi-gcc`).
 | Соленоїдні клапани | `valves.c` | готово |
 | UART-лог | `log.c` | готово |
 | BLDC-помпа (ШІМ + тахо) | `bldc_pump.c` | в роботі |
+| Протокол телеметрії (кадр + CRC16) | `protocol.c`, [формат](protocol.md) | готово, тест на ПК (`tests/run.sh`) |
 | Керування нагрівом (PID + SSR) | — | todo |
 | Дисплей / тактильна ручка (ESP32) | окремий проєкт | todo |

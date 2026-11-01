@@ -25,8 +25,8 @@ typedef struct
     float temp_steam_boiler;   // celsius;
     float temp_preheat_boiler; // celsius;
     uint32_t up_time_ms;       // time;
-    uint32_t flowmeter;        // impulse;
     uint32_t seq; // sample;
+    uint32_t flowmeter;        // impulse;
     uint16_t faults;
     uint16_t rpm_pump; // rpm;
     uint16_t pressure_pump; // bar * 100;

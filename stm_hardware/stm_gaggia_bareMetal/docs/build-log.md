@@ -216,5 +216,6 @@ of an AI coding assistant.
 | Solenoid valves | `valves.c` | done |
 | UART log | `log.c` | done |
 | BLDC pump (PWM + tacho) | `bldc_pump.c` | in progress |
+| Telemetry protocol (frame + CRC16) | `protocol.c`, [format](protocol.md) | done, PC-tested (`tests/run.sh`) |
 | Heater control (PID + SSR) | — | todo |
 | Display / haptic knob (ESP32) | separate project | todo |
