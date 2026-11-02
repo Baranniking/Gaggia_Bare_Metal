@@ -3,6 +3,7 @@
 #include "main.h"
 #include "protocol.h"
 #include "system_snapshot.h"
+#include "stdbool.h"
 
 HAL_StatusTypeDef init_esp_link(UART_HandleTypeDef *huart);
 HAL_StatusTypeDef esp_link_send_telemetry(const system_snapshot_t *snapshot);
