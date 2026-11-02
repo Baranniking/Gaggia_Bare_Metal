@@ -216,6 +216,27 @@ of an AI coding assistant.
 | Solenoid valves | `valves.c` | done |
 | UART log | `log.c` | done |
 | BLDC pump (PWM + tacho) | `bldc_pump.c` | in progress |
-| Telemetry protocol (frame + CRC16) | `protocol.c`, [format](protocol.md) | done, PC-tested (`tests/run.sh`) |
+| Telemetry protocol (frame + CRC16) | `protocol.c`, [format](protocol.md) | done, PC-tested (`tests/run.sh`), checked on the wire with a logic analyzer |
 | Heater control (PID + SSR) | — | todo |
 | Display / haptic knob (ESP32) | separate project | todo |
+
+### Protocol check on the wire
+
+The telemetry UART line was captured with a Saleae Logic 2 (Async Serial analyzer, 115200 8N1). Bytes go out
+back-to-back (~87.9 µs per byte, no gaps), and the decoded stream matches the [frame layout](protocol.md).
+
+Start of a frame:
+
+```
+AA 55 01 01 28 | 80 C8 66 00 | 20 07 01 00 | 00 00 00 00 | 60 00 | F5 00 | F4 00 | F2 00 | 5D 00 | 00 00 | 1A 00 | 30 00 | 50 00 ...
+header           up_time_ms    seq           flowmeter     faults  brew    steam   preheat rpm     press.  probe   min     max
+```
+
+- Header: start `AA 55`, version 1, type `0x01`, data length `0x28` = 40.
+- `up_time_ms` = 6 736 000 and `seq` = 67 360 → exactly one frame per 100 ms.
+- `faults = 0x0060` (steam probe + tank sensor), zero flowmeter pulses.
+- Temperatures 24.5 / 24.4 / 24.2 °C (brew / steam / preheat, room temperature).
+
+End of the same frame: `00 07 00 01 00 01 00 00 00 00 | 59 A5` — NTC mask `0x07` (all OK), SSR off, pump and PWM valve
+stopped, valves closed, probe states `0` (unknown), then `crc16 = 0xA559`. CRC-16/CCITT-FALSE recomputed over bytes
+`2..44` of the captured frame gives `0xA559`, so the frame is valid on the wire.

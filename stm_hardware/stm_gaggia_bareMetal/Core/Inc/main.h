@@ -79,6 +79,14 @@ void Error_Handler(void);
 #define adc_tank_level_max_GPIO_Port GPIOB
 #define pwm_water_level_Pin GPIO_PIN_8
 #define pwm_water_level_GPIO_Port GPIOA
+#define terminal_tx_Pin GPIO_PIN_9
+#define terminal_tx_GPIO_Port GPIOA
+#define terminal_rx_Pin GPIO_PIN_10
+#define terminal_rx_GPIO_Port GPIOA
+#define esp_tx_Pin GPIO_PIN_11
+#define esp_tx_GPIO_Port GPIOA
+#define esp_rx_Pin GPIO_PIN_12
+#define esp_rx_GPIO_Port GPIOA
 #define pwm_steam_valve_Pin GPIO_PIN_4
 #define pwm_steam_valve_GPIO_Port GPIOB
 #define pump_tacho_Pin GPIO_PIN_5

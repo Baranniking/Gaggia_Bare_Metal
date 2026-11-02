@@ -59,7 +59,6 @@ size_t protocol_pack_telemetry(const system_snapshot_t *snapshot, uint8_t *buf, 
     p = put_u8(p, FORMAT_VERSION);
     p = put_u8(p, TELEMETRY_TYPE);
     p = put_u8(p, PROTOCOL_DATA_LEN);
-
     p = put_u32(p, snapshot->up_time_ms);
     p = put_u32(p, snapshot->seq);
     p = put_u32(p, snapshot->flowmeter);
