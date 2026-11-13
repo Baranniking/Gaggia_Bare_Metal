@@ -53,14 +53,16 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
  Core/Src/steam_pwm_valve.c
  Core/Src/water_level_tank.c
  Core/Src/system_snapshot.c
- Core/Src/protocol.c
  Core/Src/esp_link.c
+ ../../common/gaggia_proto.c
+ Core/Src/tlm_adapter.c
     # Add user sources here
 )
 
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
+    ../../common/
 )
 
 # Add project symbols (macros)

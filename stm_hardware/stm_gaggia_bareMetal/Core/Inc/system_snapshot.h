@@ -19,6 +19,10 @@
 #define FAULT_TANK_SENSOR  (1u << 6)  
 #define FAULT_TANK_EMPTY   (1u << 7)  
 
+#define NTC_BIT_BREW (1u << 2)
+#define NTC_BIT_STEAM (1u << 1)
+#define NTC_BIT_PREHEAT (1u << 0)
+
 typedef struct
 {
     float temp_brew_boiler;    // celsius;

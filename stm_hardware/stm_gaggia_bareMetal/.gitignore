@@ -3,3 +3,4 @@ mx.scratch
 !.settings
 tests/test_protocol
 tests/test_protocol.exe
+tests/*.exe

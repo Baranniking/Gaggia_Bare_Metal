@@ -5,15 +5,15 @@ static void fill_ntc(system_snapshot_t *snapshot, const ntc_sensor_t *ntc_brew, 
 {
     snapshot->state_ntc_boiler = 0;
     if (ntc_brew->ntc_status)
-        snapshot->state_ntc_boiler |= (1u << 2);
+        snapshot->state_ntc_boiler |= NTC_BIT_BREW;
     else
         snapshot->faults |= FAULT_NTC_BREW;
     if (ntc_steam->ntc_status)
-        snapshot->state_ntc_boiler |= (1u << 1);
+        snapshot->state_ntc_boiler |= NTC_BIT_STEAM;
     else
         snapshot->faults |= FAULT_NTC_STEAM;
     if (ntc_preheat->ntc_status)
-        snapshot->state_ntc_boiler |= (1u << 0);
+        snapshot->state_ntc_boiler |= NTC_BIT_PREHEAT;
     else
         snapshot->faults |= FAULT_NTC_PREHEAT;
     snapshot->temp_brew_boiler = ntc_brew->temp;

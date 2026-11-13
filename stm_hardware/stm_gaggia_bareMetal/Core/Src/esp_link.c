@@ -1,7 +1,10 @@
 #include "esp_link.h"
+#include "stm32f4xx_hal.h"
 #include "stm32f4xx_hal_def.h"
+#include "string.h"
+#include "math.h"
 
-static uint8_t tx_buf[PROTOCOL_FRAME_LEN];
+static uint8_t tx_buf[PROTO_MAX_FRAME];
 static UART_HandleTypeDef *link_esp_uart = NULL;
 static volatile bool flag_tx_uart;
 static HAL_StatusTypeDef shipment_status;
@@ -27,16 +30,18 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
     if (huart == link_esp_uart)
     {
         flag_tx_uart = false;
-    } 
+    }
 }
 
-HAL_StatusTypeDef esp_link_send_telemetry(const system_snapshot_t *snapshot)
+HAL_StatusTypeDef esp_link_send_telemetry(const msg_telemetry_t *tlm)
 {
-    if (snapshot == NULL || link_esp_uart == NULL)
+    static uint8_t seq = 0;
+
+    if (tlm == NULL || link_esp_uart == NULL)
         return HAL_ERROR;
     if (flag_tx_uart)
         return HAL_BUSY;
-    size_t size_buf = protocol_pack_telemetry(snapshot, tx_buf, sizeof(tx_buf));
+    size_t size_buf = proto_encode(tx_buf, sizeof(tx_buf), MSG_TELEMETRY, seq, tlm, sizeof(*tlm));
     if (size_buf == 0)
         return HAL_ERROR;
     flag_tx_uart = true;
@@ -46,5 +51,6 @@ HAL_StatusTypeDef esp_link_send_telemetry(const system_snapshot_t *snapshot)
         flag_tx_uart = false;
         return shipment_status;
     }
+    seq += 1;
     return HAL_OK;
 }
