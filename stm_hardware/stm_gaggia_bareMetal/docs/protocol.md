@@ -199,6 +199,15 @@ pressure, flow, volume, faults, flags, shot data, …) are sent as `0` for now.
 `HAL_UART_Transmit_DMA`. If the previous transfer is still running it returns `HAL_BUSY` and the frame is skipped
 (`SEQ` is not advanced).
 
+## Bench status
+
+- The ESP32 display is running and receives the STM32 telemetry over the link. Temperatures and fault values are
+  shown on the screen (on the photo: brew boiler 24.3 °C, target 94.5, steam 24 °, pressure 0.0 bar, profile
+  "Classic 9 bar").
+- Hardware changes in the machine:
+  - a hole for a USB Type-C cable was made in the case, for flashing and debugging;
+  - a 24 V switching power supply was installed.
+
 ## Reference frame
 
 `MSG_ACK`, `SEQ = 5`, payload `{seq = 1, result = ACK_OK}`:
