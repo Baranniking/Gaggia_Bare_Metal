@@ -51,7 +51,7 @@ assembly is held together by 3D-printed brackets (blue clamp, yellow base).
 | <img src="image/7_intergation_bldc_pump.jpg" alt="" width="300"> | <img src="image/8_bldc_pump_with_flowmeter.jpg" alt="" width="300"> |
 
 The pump speed is set by PWM from the STM32 (TIM4, `PB6`), with a tacho input for RPM feedback — see
-[`bldc_pump.c`](../Core/Src/bldc_pump.c).
+[`bldc_pump.c`](../Core/Src/drivers/bldc_pump.c).
 
 ### PWM steam valve
 
@@ -112,7 +112,7 @@ The valve block is closed with a cover; the tubing exits through a slot.
 <img src="image/22_box_distribution%20valves.jpg" alt="Valve box" width="600">
 
 In firmware every valve is a GPIO output (`PA3` fill, `PA4` brew, `PA5` hot water). All valves are closed on
-start-up and in `Error_Handler()` — see [`valves.c`](../Core/Src/valves.c).
+start-up and in `Error_Handler()` — see [`valves.c`](../Core/Src/drivers/valves.c).
 
 ---
 
@@ -132,11 +132,11 @@ The cylindrical boilers are mounted vertically in the module on the welded brack
 | <img src="image/25_boiler_integration.jpg" alt="" width="300"> | <img src="image/26_boiler_integration.jpg" alt="" width="300"> |
 
 Each heater is switched by an SSR (`PA0` preheat, `PA1` steam, `PA2` brew). Temperature is read by three NTC
-thermistors on ADC1 + DMA (Steinhart–Hart, 1.5 kΩ pull-up) — see [`ntc_sensor.c`](../Core/Src/ntc_sensor.c).
+thermistors on ADC1 + DMA (Steinhart–Hart, 1.5 kΩ pull-up) — see [`ntc_sensor.c`](../Core/Src/drivers/ntc_sensor.c).
 
 The steam boiler water level is measured with a conductive probe: the probe is excited by a PWM signal from TIM1
 (`PA8`) and the returned amplitude is read by the ADC (`PA6`). Low amplitude = probe in water (WET), high = DRY —
-see [`water_level_steam.c`](../Core/Src/water_level_steam.c).
+see [`water_level_steam.c`](../Core/Src/drivers/water_level_steam.c).
 
 ### SSR
 

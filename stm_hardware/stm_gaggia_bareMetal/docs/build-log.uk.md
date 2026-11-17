@@ -51,7 +51,7 @@ Gaggia Classic, перебудована з нуля: нова гідравлі�
 | <img src="image/7_intergation_bldc_pump.jpg" alt="" width="300"> | <img src="image/8_bldc_pump_with_flowmeter.jpg" alt="" width="300"> |
 
 Швидкість помпи задається ШІМ із STM32 (TIM4, `PB6`), зворотний зв'язок по обертах — через тахо-вхід, див.
-[`bldc_pump.c`](../Core/Src/bldc_pump.c).
+[`bldc_pump.c`](../Core/Src/drivers/bldc_pump.c).
 
 ### Паровий клапан з ШІМ
 
@@ -112,7 +112,7 @@ Gaggia Classic, перебудована з нуля: нова гідравлі�
 <img src="image/22_box_distribution%20valves.jpg" alt="Короб клапанів" width="600">
 
 У прошивці кожен клапан — це вихід GPIO (`PA3` наповнення, `PA4` група, `PA5` гаряча вода). Під час старту
-та в `Error_Handler()` усі клапани закриваються — див. [`valves.c`](../Core/Src/valves.c).
+та в `Error_Handler()` усі клапани закриваються — див. [`valves.c`](../Core/Src/drivers/valves.c).
 
 ---
 
@@ -132,11 +132,11 @@ Gaggia Classic, перебудована з нуля: нова гідравлі�
 | <img src="image/25_boiler_integration.jpg" alt="" width="300"> | <img src="image/26_boiler_integration.jpg" alt="" width="300"> |
 
 Кожен нагрівач вмикається через SSR (`PA0` преднагрів, `PA1` пара, `PA2` кавовий бойлер). Температура зчитується трьома
-NTC-термісторами через ADC1 + DMA (Steinhart–Hart, підтяжка 1.5 кОм) — див. [`ntc_sensor.c`](../Core/Src/ntc_sensor.c).
+NTC-термісторами через ADC1 + DMA (Steinhart–Hart, підтяжка 1.5 кОм) — див. [`ntc_sensor.c`](../Core/Src/drivers/ntc_sensor.c).
 
 Рівень води в паровому бойлері вимірюється кондуктометричним щупом: щуп збуджується ШІМ-сигналом з TIM1
 (`PA8`), а амплітуда відгуку зчитується АЦП (`PA6`). Низька амплітуда — щуп у воді (WET), висока — DRY,
-див. [`water_level_steam.c`](../Core/Src/water_level_steam.c).
+див. [`water_level_steam.c`](../Core/Src/drivers/water_level_steam.c).
 
 ### SSR
 

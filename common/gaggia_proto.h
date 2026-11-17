@@ -1,4 +1,4 @@
-
+/*
  *   +------+------+-----+------+-----+-------------+-------+-------+
  *   | 0xAA | 0x55 | data length  | TYPE | seq | data  |   crc16    |
  *   +------+------+-----+------+-----+-------------+-------+-------+
@@ -26,6 +26,7 @@ extern "C" {
 #define PROTO_MAX_FRAME    (PROTO_MAX_PAYLOAD + PROTO_OVERHEAD)
 #define PROTO_TELEMETRY_PERIOD_MS  50u
 #define PROTO_LINK_TIMEOUT_MS      500u
+
 
 #if defined(__GNUC__)
 #define PROTO_PACKED __attribute__((packed))

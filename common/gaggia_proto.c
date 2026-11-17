@@ -1,6 +1,4 @@
-/**
- * gaggia_proto.c — framing + CRC. SHARED FILE (ESP32 and STM32).
- */
+
 #include "gaggia_proto.h"
 #include <string.h>
 

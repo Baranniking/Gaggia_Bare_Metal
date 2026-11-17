@@ -2,8 +2,8 @@
 
 Binary framing over UART, shared by both MCUs. Implementation: [`common/gaggia_proto.c`](../../../common/gaggia_proto.c),
 [`common/gaggia_proto.h`](../../../common/gaggia_proto.h) (a single shared file for ESP32 and STM32). On the STM32 side
-the snapshot is converted to a telemetry message by [`tlm_adapter.c`](../Core/Src/tlm_adapter.c) and sent by
-[`esp_link.c`](../Core/Src/esp_link.c) (DMA TX). Source data: [`system_snapshot.h`](../Core/Inc/system_snapshot.h).
+the snapshot is converted to a telemetry message by [`tlm_adapter.c`](../Core/Src/link/tlm_adapter.c) and sent by
+[`esp_link.c`](../Core/Src/link/esp_link.c) (DMA TX). Source data: [`system_snapshot.h`](../Core/Inc/app/system_snapshot.h).
 
 - Byte order: **little-endian**, all payload structs are `packed`.
 - Protocol version: `PROTO_VERSION = 1` (sent in `MSG_HELLO`, not in every frame).
@@ -191,11 +191,11 @@ Struct sizes are fixed by `_Static_assert` in the header (hello 8, telemetry 40,
 
 ## STM32 side: current state
 
-[`tlm_from_snapshot()`](../Core/Src/tlm_adapter.c) fills the telemetry from `system_snapshot_t`. Currently filled:
+[`tlm_from_snapshot()`](../Core/Src/link/tlm_adapter.c) fills the telemetry from `system_snapshot_t`. Currently filled:
 `uptime_s`, `pump_pct`, `valve_pct`, `brew_c_x100`, `steam_c_x10`, `preheat_c_x10`. All other fields (`status`, `phase`,
 pressure, flow, volume, faults, flags, shot data, …) are sent as `0` for now.
 
-[`esp_link_send_telemetry()`](../Core/Src/esp_link.c) encodes `MSG_TELEMETRY` with an incrementing `SEQ` and sends it with
+[`esp_link_send_telemetry()`](../Core/Src/link/esp_link.c) encodes `MSG_TELEMETRY` with an incrementing `SEQ` and sends it with
 `HAL_UART_Transmit_DMA`. If the previous transfer is still running it returns `HAL_BUSY` and the frame is skipped
 (`SEQ` is not advanced).
 

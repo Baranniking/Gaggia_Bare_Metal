@@ -26,17 +26,23 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "ntc_sensor.h"
+/* drivers */
 #include "adc_dma.h"
+#include "bldc_pump.h"
+#include "heater.h"
 #include "log.h"
+#include "ntc_sensor.h"
+#include "steam_pwm_valve.h"
 #include "valves.h"
 #include "water_level_steam.h"
-#include "bldc_pump.h"
-#include "steam_pwm_valve.h"
 #include "water_level_tank.h"
+/* app */
 #include "system_snapshot.h"
+/* link */
+#include "cmd_handler.h"
 #include "esp_link.h"
 #include "tlm_adapter.h"
+#include "pid.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -47,12 +53,7 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define NTC_10K_INIT {.sh_a = 1.042752e-03f, .sh_b = 2.513051e-04f, .sh_c = -4.180126e-09f, .r_pull = 1500.0f}
-// #define TEST_PUMP
-// #define TEST_PWM_VALVE
-uint32_t count_error = 0;
-uint32_t count_busy = 0;
-uint32_t count_ok = 0;
-uint32_t count_timout = 0;
+#define SENSORS_PERIOD_MS 50u
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -63,23 +64,32 @@ uint32_t count_timout = 0;
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+
 ntc_sensor_t ntc_preheat_sensor = NTC_10K_INIT;
 ntc_sensor_t ntc_steam_sensor = NTC_10K_INIT;
 ntc_sensor_t ntc_coffee_sensor = NTC_10K_INIT;
 
-bldc_pump_t pump;
-steam_pwm_valve_t steam_pwm_valve;
-water_level_tank_t tank_level_probe;
-water_probe_level_t steam_probe;
-system_snapshot_t snapshot;
-msg_telemetry_t tlm;
+static bldc_pump_t pump;
+static steam_pwm_valve_t steam_pwm_valve;
+static water_level_tank_t tank_level_probe;
+static water_probe_level_t steam_probe;
+
+static system_snapshot_t snapshot;
+static msg_telemetry_t tlm;
+static proto_frame_t rx_frame;
+
+/* ESP link TX statistics (for debugging) */
+static uint32_t count_ok, count_busy, count_error, count_timeout;
 
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-
+static void app_init(void);
+static void link_service(void);
+static void sensors_update(void);
+static void telemetry_send(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -124,28 +134,7 @@ int main(void)
   MX_TIM3_Init();
   MX_USART6_UART_Init();
   /* USER CODE BEGIN 2 */
-  HAL_StatusTypeDef DMA_Status = adc_dma_init(&hadc1);
-  if (DMA_Status != HAL_OK)
-  {
-    // Handle error
-    Error_Handler();
-  }
-  HAL_StatusTypeDef UART6_Status = init_esp_link(&huart6);
-  if (UART6_Status != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  valve_init();
-
-  pump_init(&pump, &htim4, TIM_CHANNEL_1, pump_tacho_Pin);
-  log_init(&huart1);
-  init_ntc_sensor(&ntc_preheat_sensor, adc_dma_get_raw(ntc_preheat));
-  init_ntc_sensor(&ntc_steam_sensor, adc_dma_get_raw(ntc_steam));
-  init_ntc_sensor(&ntc_coffee_sensor, adc_dma_get_raw(ntc_coffee));
-  init_water_level(&steam_probe, &htim1, TIM_CHANNEL_1);
-  init_steam_pwm_valve(&steam_pwm_valve, &htim3, TIM_CHANNEL_1);
-  init_water_level_tank(&tank_level_probe);
+  app_init();
 
   /* USER CODE END 2 */
 
@@ -153,40 +142,20 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    link_service();
 
+    heater_update_all();
+    heater_set(COFFEE_HEATER, 500);
     update_pump_tacho(&pump);
     steam_pwm_valve_update(&steam_pwm_valve);
 
-    uint32_t current_time = HAL_GetTick();
     static uint32_t last_time = 0;
-    if (current_time - last_time >= 50)
+    uint32_t now = HAL_GetTick();
+    if (now - last_time >= SENSORS_PERIOD_MS)
     {
-      get_temperature(&ntc_coffee_sensor, adc_dma_get_raw(ntc_coffee));
-      get_temperature(&ntc_steam_sensor, adc_dma_get_raw(ntc_steam));
-      get_temperature(&ntc_preheat_sensor, adc_dma_get_raw(ntc_preheat));
-      water_probe_update(&steam_probe, adc_dma_get_amplitude(water_level_steam));
-      water_tank_level_tank_update(&tank_level_probe, adc_dma_get_amplitude(water_level_tank_min), adc_dma_get_amplitude(water_level_tank_max));
-      snapshot_update(&snapshot, &ntc_coffee_sensor, &ntc_steam_sensor, &ntc_preheat_sensor, &pump, &steam_pwm_valve, &tank_level_probe, &steam_probe);
-      tlm_from_snapshot(&snapshot, &tlm);
-
-      switch (esp_link_send_telemetry(&tlm))
-      {
-      case HAL_ERROR:
-        count_error++;
-        break;
-      case HAL_BUSY:
-        count_busy++;
-        break;
-      case HAL_OK:
-        count_ok++;
-        break;
-      case HAL_TIMEOUT:
-        count_timout++;
-        break;
-      default:
-        break;
-      }
-      last_time = current_time;
+      last_time = now;
+      sensors_update();
+      telemetry_send();
     }
     /* USER CODE END WHILE */
 
@@ -241,6 +210,68 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+
+/** Initialize drivers and the ESP link. */
+static void app_init(void)
+{
+  reset_cause_save();
+
+  if (adc_dma_init(&hadc1) != HAL_OK)
+    Error_Handler();
+  if (init_esp_link(&huart6) != HAL_OK)
+    Error_Handler();
+
+  valve_init();
+  heaters_init();
+  pump_init(&pump, &htim4, TIM_CHANNEL_1, pump_tacho_Pin);
+  log_init(&huart1);
+  init_ntc_sensor(&ntc_preheat_sensor, adc_dma_get_raw(ntc_preheat));
+  init_ntc_sensor(&ntc_steam_sensor, adc_dma_get_raw(ntc_steam));
+  init_ntc_sensor(&ntc_coffee_sensor, adc_dma_get_raw(ntc_coffee));
+  init_water_level(&steam_probe, &htim1, TIM_CHANNEL_1);
+  init_steam_pwm_valve(&steam_pwm_valve, &htim3, TIM_CHANNEL_1);
+  init_water_level_tank(&tank_level_probe);
+}
+
+/** Receive and handle a command frame from the display, if any. */
+static void link_service(void)
+{
+  if (esp_link_tx_ready() && esp_link_poll(&rx_frame))
+  {
+    cmd_send_hello();
+    cmd_handler(&rx_frame);
+  }
+}
+
+/** Read all sensors and refresh the system snapshot. */
+static void sensors_update(void)
+{
+  get_temperature(&ntc_coffee_sensor, adc_dma_get_raw(ntc_coffee));
+  get_temperature(&ntc_steam_sensor, adc_dma_get_raw(ntc_steam));
+  get_temperature(&ntc_preheat_sensor, adc_dma_get_raw(ntc_preheat));
+  water_probe_update(&steam_probe, adc_dma_get_amplitude(water_level_steam));
+  water_tank_level_tank_update(&tank_level_probe,
+                               adc_dma_get_amplitude(water_level_tank_min),
+                               adc_dma_get_amplitude(water_level_tank_max));
+  snapshot_update(&snapshot, &ntc_coffee_sensor, &ntc_steam_sensor, &ntc_preheat_sensor,
+                  &pump, &steam_pwm_valve, &tank_level_probe, &steam_probe);
+}
+
+/** Convert the snapshot to a telemetry message and send it to the display. */
+static void telemetry_send(void)
+{
+  tlm_from_snapshot(&snapshot, &tlm);
+
+  switch (esp_link_send(MSG_TELEMETRY, &tlm, sizeof(tlm)))
+  {
+  case HAL_OK:      count_ok++;      break;
+  case HAL_BUSY:    count_busy++;    break;
+  case HAL_ERROR:   count_error++;   break;
+  case HAL_TIMEOUT: count_timeout++; break;
+  default: break;
+  }
+}
+
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
   pump.impulse_tacho++;

@@ -94,6 +94,12 @@ void Error_Handler(void);
 #define pump_tacho_EXTI_IRQn EXTI9_5_IRQn
 #define pwm_pump_Pin GPIO_PIN_6
 #define pwm_pump_GPIO_Port GPIOB
+#define ssr_steam_heat_Pin GPIO_PIN_7
+#define ssr_steam_heat_GPIO_Port GPIOB
+#define ssr_coffee_heat_Pin GPIO_PIN_8
+#define ssr_coffee_heat_GPIO_Port GPIOB
+#define ssr_pre_heat_Pin GPIO_PIN_9
+#define ssr_pre_heat_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 

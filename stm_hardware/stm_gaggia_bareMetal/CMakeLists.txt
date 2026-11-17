@@ -44,18 +44,22 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
- Core/Src/ntc_sensor.c
- Core/Src/adc_dma.c
- Core/Src/log.c
- Core/Src/valves.c
- Core/Src/water_level_steam.c
- Core/Src/bldc_pump.c
- Core/Src/steam_pwm_valve.c
- Core/Src/water_level_tank.c
- Core/Src/system_snapshot.c
- Core/Src/esp_link.c
+ Core/Src/drivers/ntc_sensor.c
+ Core/Src/drivers/adc_dma.c
+ Core/Src/drivers/log.c
+ Core/Src/drivers/valves.c
+ Core/Src/drivers/water_level_steam.c
+ Core/Src/drivers/bldc_pump.c
+ Core/Src/drivers/steam_pwm_valve.c
+ Core/Src/drivers/water_level_tank.c
+ Core/Src/app/system_snapshot.c
+ Core/Src/link/esp_link.c
  ../../common/gaggia_proto.c
- Core/Src/tlm_adapter.c
+ Core/Src/link/tlm_adapter.c
+ Core/Src/link/cmd_handler.c
+ Core/Src/drivers/heater.c
+ Core/Src/app/pid.c
+ Core/Src/app/boiler_ctrl.c
     # Add user sources here
 )
 
@@ -63,6 +67,9 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
     ../../common/
+    Core/Inc/drivers
+    Core/Inc/app
+    Core/Inc/link
 )
 
 # Add project symbols (macros)
