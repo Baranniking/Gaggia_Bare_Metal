@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "adc.h"
+#include "boiler_ctrl.h"
 #include "dma.h"
 #include "tim.h"
 #include "usart.h"
@@ -74,6 +75,14 @@ static steam_pwm_valve_t steam_pwm_valve;
 static water_level_tank_t tank_level_probe;
 static water_probe_level_t steam_probe;
 
+static pid_ctrl_t preheat_pid;
+static pid_ctrl_t steam_pid;
+static pid_ctrl_t coffee_pid;
+
+static boiler_t preheat_boiler;
+static boiler_t steam_boiler;
+static boiler_t coffee_boiler;
+
 static system_snapshot_t snapshot;
 static msg_telemetry_t tlm;
 static proto_frame_t rx_frame;
@@ -110,8 +119,7 @@ int main(void)
 
   /* MCU Configuration--------------------------------------------------------*/
 
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
+  /* Reset of all peripherals, Initializes the Flash interface and the Systick. *c  HAL_Init();
 
   /* USER CODE BEGIN Init */
 
@@ -135,17 +143,15 @@ int main(void)
   MX_USART6_UART_Init();
   /* USER CODE BEGIN 2 */
   app_init();
+      /* USER CODE END 2 */
 
-  /* USER CODE END 2 */
-
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-  while (1)
+      /* Infinite loop */
+      /* USER CODE BEGIN WHILE */
+      while (1)
   {
     link_service();
 
     heater_update_all();
-    heater_set(COFFEE_HEATER, 500);
     update_pump_tacho(&pump);
     steam_pwm_valve_update(&steam_pwm_valve);
 
@@ -156,6 +162,15 @@ int main(void)
       last_time = now;
       sensors_update();
       telemetry_send();
+    }
+
+    static uint32_t last_time_update_boiler = 0;
+    if (now - last_time_update_boiler >= 500)
+    {
+      boiler_ctrl_update(&preheat_boiler);
+      boiler_ctrl_update(&steam_boiler);
+      boiler_ctrl_update(&coffee_boiler);
+      last_time_update_boiler = now;
     }
     /* USER CODE END WHILE */
 
@@ -231,6 +246,24 @@ static void app_init(void)
   init_water_level(&steam_probe, &htim1, TIM_CHANNEL_1);
   init_steam_pwm_valve(&steam_pwm_valve, &htim3, TIM_CHANNEL_1);
   init_water_level_tank(&tank_level_probe);
+  if (init_pid(&preheat_pid, 10.0f, 3.0f, 0, 0.5f, 1000, 0) != HAL_OK || init_pid(&steam_pid, 10.0f, 3.0f, 0, 0.5f, 1000, 0) != HAL_OK || init_pid(&coffee_pid, 10.0f, 3.0f, 0, 0.5f, 1000, 0) != HAL_OK || init_boiler(&preheat_boiler, &ntc_preheat_sensor, &preheat_pid, PRE_HEATER, 95.0f, 70.0f) != HAL_OK || init_boiler(&steam_boiler, &ntc_steam_sensor, &steam_pid, STEAM_HEATER, 130.0f, 100.0f) != HAL_OK || init_boiler(&coffee_boiler, &ntc_coffee_sensor, &coffee_pid, COFFEE_HEATER, 100.0f, 50.0f) != HAL_OK)
+  {
+    heater_stop_all();
+    while (1)
+    {
+      /* code */
+    }
+    
+
+  }
+  if(init_cmd_handler(&preheat_boiler, &steam_boiler, &coffee_boiler) != HAL_OK)
+  {
+    heater_stop_all();
+    while(1)
+    {
+
+    }
+  }
 }
 
 /** Receive and handle a command frame from the display, if any. */
@@ -264,11 +297,20 @@ static void telemetry_send(void)
 
   switch (esp_link_send(MSG_TELEMETRY, &tlm, sizeof(tlm)))
   {
-  case HAL_OK:      count_ok++;      break;
-  case HAL_BUSY:    count_busy++;    break;
-  case HAL_ERROR:   count_error++;   break;
-  case HAL_TIMEOUT: count_timeout++; break;
-  default: break;
+  case HAL_OK:
+    count_ok++;
+    break;
+  case HAL_BUSY:
+    count_busy++;
+    break;
+  case HAL_ERROR:
+    count_error++;
+    break;
+  case HAL_TIMEOUT:
+    count_timeout++;
+    break;
+  default:
+    break;
   }
 }
 

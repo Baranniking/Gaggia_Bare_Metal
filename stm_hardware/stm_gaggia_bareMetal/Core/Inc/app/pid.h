@@ -19,6 +19,9 @@ typedef struct
 } pid_ctrl_t;
 
 float pid_update(pid_ctrl_t *p, float measured);
-HAL_StatusTypeDef pid_init(pid_ctrl_t *p, float pk, float ik, float dk, float dt, float max, float min);
+HAL_StatusTypeDef init_pid(pid_ctrl_t *p, float pk, float ik, float dk, float dt, float max, float min);
+HAL_StatusTypeDef pid_reset(pid_ctrl_t *p);
+HAL_StatusTypeDef pid_set_gains(pid_ctrl_t *p, float kp, float ki, float kd);
+
 
 #endif

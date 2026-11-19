@@ -4,6 +4,8 @@
 #include "main.h"
 #include "pid.h"
 #include "ntc_sensor.h"
+#include "gaggia_proto.h"
+
 
 typedef struct
 {
@@ -13,10 +15,15 @@ typedef struct
     float temp_min;
     float temp_max;
     uint8_t bad_count;
+    bool enable_boiler;
     bool alarm;
 } boiler_t;
 
-HAL_StatusTypeDef boiler_init(boiler_t *b, ntc_sensor_t *s, pid_ctrl_t *p, id_heater_t id, float max_temp, float min_temp);
+HAL_StatusTypeDef init_boiler(boiler_t *b, ntc_sensor_t *s, pid_ctrl_t *p, id_heater_t id, float max_temp, float min_temp);
 HAL_StatusTypeDef boiler_set_target(boiler_t *b, float target_temp);
+HAL_StatusTypeDef boiler_ctrl_update(boiler_t *b);
+HAL_StatusTypeDef enable_boiler(boiler_t *b);
+HAL_StatusTypeDef disable_boiler(boiler_t *b);
+HAL_StatusTypeDef boiler_apply_param(const cmd_params_t *p, boiler_t *b);
 
 #endif
