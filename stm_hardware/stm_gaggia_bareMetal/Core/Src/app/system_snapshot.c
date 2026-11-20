@@ -1,24 +1,34 @@
 #include "system_snapshot.h"
+#include "boiler_ctrl.h"
 #include "valves.h"
 
-static void fill_ntc(system_snapshot_t *snapshot, const ntc_sensor_t *ntc_brew, const ntc_sensor_t *ntc_steam, const ntc_sensor_t *ntc_preheat)
+static void fill_boiler(system_snapshot_t *snapshot, const boiler_t *brew, const boiler_t *steam, const boiler_t *preheat)
 {
-    snapshot->state_ntc_boiler = 0;
-    if (ntc_brew->ntc_status)
+    if (snapshot == NULL || brew == NULL || steam == NULL || preheat == NULL)
+        return;
+    snapshot->faults &= ~FAULT_CLEAR_MASK;
+    if (brew->alarm)
+        snapshot->faults |= WIRE_FAULT_BREW_SENSOR;
+    if (steam->alarm)
+        snapshot->faults |= WIRE_FAULT_STEAM_SENSOR;
+    if (preheat->alarm)
+        snapshot->faults |= WIRE_FAULT_PREHEAT_SENSOR;
+}
+
+static void fill_ntc(system_snapshot_t *snapshot, const ntc_sensor_t *brew, const ntc_sensor_t *steam, const ntc_sensor_t *preheat)
+{
+    if (snapshot == NULL || brew == NULL || steam == NULL || preheat == NULL)
+        return;
+    snapshot->state_ntc_boiler &= ~(NTC_BIT_BREW | NTC_BIT_STEAM | NTC_BIT_PREHEAT);
+    if (brew->ntc_status)
         snapshot->state_ntc_boiler |= NTC_BIT_BREW;
-    else
-        snapshot->faults |= FAULT_NTC_BREW;
-    if (ntc_steam->ntc_status)
+    if (steam->ntc_status)
         snapshot->state_ntc_boiler |= NTC_BIT_STEAM;
-    else
-        snapshot->faults |= FAULT_NTC_STEAM;
-    if (ntc_preheat->ntc_status)
+    if (preheat->ntc_status)
         snapshot->state_ntc_boiler |= NTC_BIT_PREHEAT;
-    else
-        snapshot->faults |= FAULT_NTC_PREHEAT;
-    snapshot->temp_brew_boiler = ntc_brew->temp;
-    snapshot->temp_steam_boiler = ntc_steam->temp;
-    snapshot->temp_preheat_boiler = ntc_preheat->temp;
+    snapshot->temp_brew_boiler = brew->temp;
+    snapshot->temp_steam_boiler = steam->temp;
+    snapshot->temp_preheat_boiler = preheat->temp;
 }
 
 static void fill_pump(system_snapshot_t *snapshot, const bldc_pump_t *bldc_pump)
@@ -81,7 +91,10 @@ void snapshot_update(system_snapshot_t *snapshot, const ntc_sensor_t *ntc_brew,
                      const bldc_pump_t *bldc_pump,
                      const steam_pwm_valve_t *steam_pwm_valve,
                      const water_level_tank_t *level_tank,
-                     const water_probe_level_t *level_steam)
+                     const water_probe_level_t *level_steam,
+                     const boiler_t *brew,
+                     const boiler_t *steam,
+                     const boiler_t *preheat)
 {
     if (snapshot == NULL || ntc_brew == NULL || ntc_steam == NULL || ntc_preheat == NULL ||
         bldc_pump == NULL || steam_pwm_valve == NULL || level_tank == NULL || level_steam == NULL)
@@ -92,10 +105,11 @@ void snapshot_update(system_snapshot_t *snapshot, const ntc_sensor_t *ntc_brew,
     snapshot->faults = 0;
 
     fill_ntc(snapshot, ntc_brew, ntc_steam, ntc_preheat);
-    fill_pump(snapshot, bldc_pump);
-    fill_steam_pwm_valve(snapshot, steam_pwm_valve);
-    fill_valves(snapshot);
-    fill_steam_probe(snapshot, level_steam);
-    fill_tank(snapshot, level_tank);
-    fill_stubs(snapshot);
+   // fill_pump(snapshot, bldc_pump);
+   // fill_steam_pwm_valve(snapshot, steam_pwm_valve);
+    //fill_valves(snapshot);
+    //fill_steam_probe(snapshot, level_steam);
+    //fill_tank(snapshot, level_tank);
+   // fill_stubs(snapshot);
+    fill_boiler(snapshot, brew, steam, preheat);
 }

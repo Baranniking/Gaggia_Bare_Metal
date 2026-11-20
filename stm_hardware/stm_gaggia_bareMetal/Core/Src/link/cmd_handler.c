@@ -9,6 +9,7 @@ static bool link_up = false;
 static boiler_t *pre_heat = NULL;
 static boiler_t *steam = NULL;
 static boiler_t *coffee = NULL;
+uint8_t last_uknown_type;
 
 HAL_StatusTypeDef ack_state;
 
@@ -104,6 +105,7 @@ void cmd_handler(const proto_frame_t *t)
         break;
     default:
         ack.result = ACK_UNKNOWN;
+        last_uknown_type = t->type;
         break;
     }
 

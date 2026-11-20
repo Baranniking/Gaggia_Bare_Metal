@@ -287,7 +287,7 @@ static void sensors_update(void)
                                adc_dma_get_amplitude(water_level_tank_min),
                                adc_dma_get_amplitude(water_level_tank_max));
   snapshot_update(&snapshot, &ntc_coffee_sensor, &ntc_steam_sensor, &ntc_preheat_sensor,
-                  &pump, &steam_pwm_valve, &tank_level_probe, &steam_probe);
+                  &pump, &steam_pwm_valve, &tank_level_probe, &steam_probe, &coffee_boiler, &steam_boiler, &preheat_boiler);
 }
 
 /** Convert the snapshot to a telemetry message and send it to the display. */

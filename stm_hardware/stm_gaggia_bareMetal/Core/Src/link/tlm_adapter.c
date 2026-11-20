@@ -35,7 +35,7 @@ void tlm_from_snapshot(const system_snapshot_t *snapshot, msg_telemetry_t *tlm)
     tlm->volume_x10 = 0;     /* ml   */
     tlm->manual_bar_x10 = 0; /* echo of the manual setpoint in use */
     tlm->shot_ms = 0;
-    tlm->faults = 0;      /* gaggia_fault_t bits */
+    tlm->faults = snapshot->faults;      /* gaggia_fault_t bits */
     tlm->flags = 0;       /* TLM_F_* */
     tlm->steam_power = 0; /* echo of the requested valve opening */
     tlm->clean_cycle = 0;

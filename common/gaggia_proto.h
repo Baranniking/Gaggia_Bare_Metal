@@ -77,6 +77,8 @@ enum { WIRE_PH_IDLE = 0, WIRE_PH_PREINFUSION, WIRE_PH_SOAK, WIRE_PH_EXTRACTION, 
 #define WIRE_FAULT_BREW_SENSOR   (1u << 1)
 #define WIRE_FAULT_STEAM_SENSOR  (1u << 2)
 #define WIRE_FAULT_OVERTEMP      (1u << 3)
+#define WIRE_FAULT_PREHEAT_SENSOR (1u << 5)
+#define FAULT_CLEAR_MASK 0x26U 
 /* bit 4 (link lost) is set by the ESP itself, never sent */
 
 /* telemetry flags */
